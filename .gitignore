@@ -242,6 +242,7 @@ Temporary Items
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 # C extensions
 *.so
@@ -369,6 +370,10 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+test_env/
+
+# Test projects
+test_project/
 
 # Spyder project settings
 .spyderproject
