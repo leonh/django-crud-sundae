@@ -1,41 +1,27 @@
 #!/bin/bash
 set -e
 
-echo "🍨 Django CRUD Sundae - Quick Demo Setup"
+echo "🍨 Django CRUD Sundae - Local Demo Test"
 echo "========================================"
 echo ""
 
-# Check if Python is installed
-if ! command -v python3 &> /dev/null; then
-    echo "❌ Python 3 is not installed. Please install Python 3.8 or higher."
-    exit 1
-fi
-
 # Create temporary directory
-DEMO_DIR="django-crud-sundae-demo"
+DEMO_DIR="/tmp/django-crud-sundae-test"
 echo "📁 Creating demo directory: $DEMO_DIR"
+rm -rf "$DEMO_DIR"
 mkdir -p "$DEMO_DIR"
 cd "$DEMO_DIR"
 
 # Create virtual environment
 echo "🐍 Creating virtual environment..."
 python3 -m venv venv
+source venv/bin/activate
 
-# Activate virtual environment
-if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
-    source venv/Scripts/activate
-else
-    source venv/bin/activate
-fi
-
-# Install packages
-echo "📦 Installing Django and dependencies..."
+# Install Django and local django-crud-sundae
+echo "📦 Installing Django and django-crud-sundae from source..."
 pip install --quiet --upgrade pip
 pip install --quiet django django-filter
-
-# Note: When django-crud-sundae is published to PyPI, use:
-# pip install --quiet django-crud-sundae
-# For now, users should clone the repo and install from source
+pip install --quiet -e /home/user/django-crud-sundae
 
 # Create Django project
 echo "🚀 Creating Django project..."
@@ -106,8 +92,47 @@ EOF
 cat > demo/urls.py << 'EOF'
 from django.contrib import admin
 from django.urls import path, include
+from django.http import HttpResponse
+
+def home(request):
+    html = '''
+    <html>
+    <head>
+        <title>Django CRUD Sundae Demo</title>
+        <style>
+            body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+            h1 { color: #2c3e50; }
+            .links { background: #f8f9fa; padding: 20px; border-radius: 8px; }
+            a { color: #3498db; text-decoration: none; }
+            a:hover { text-decoration: underline; }
+            li { margin: 10px 0; }
+        </style>
+    </head>
+    <body>
+        <h1>🍨 Django CRUD Sundae Demo</h1>
+        <p>Welcome to the Django CRUD Sundae demonstration!</p>
+        <div class="links">
+            <h2>Quick Links:</h2>
+            <ul>
+                <li><a href="/articles/article/">📋 Articles List</a> - View all articles</li>
+                <li><a href="/articles/article/create/">➕ Create Article</a> - Add a new article</li>
+                <li><a href="/admin/">⚙️ Admin Interface</a> - Django admin (admin/admin)</li>
+            </ul>
+            <h2>Features to Try:</h2>
+            <ul>
+                <li>🔍 Search articles by title or content</li>
+                <li>🎯 Filter by status (Draft/Published)</li>
+                <li>☑️ Select multiple articles and use bulk actions</li>
+                <li>✏️ Create, edit, and delete articles</li>
+            </ul>
+        </div>
+    </body>
+    </html>
+    '''
+    return HttpResponse(html)
 
 urlpatterns = [
+    path('', home, name='home'),
     path('admin/', admin.site.urls),
     path('articles/', include('articles.urls')),
 ]
@@ -129,6 +154,12 @@ if "'sundae'" not in content:
         "INSTALLED_APPS = [\n    'sundae',\n    'articles',"
     )
 
+# Update ALLOWED_HOSTS
+content = content.replace(
+    "ALLOWED_HOSTS = []",
+    "ALLOWED_HOSTS = ['*']"
+)
+
 with open(settings_file, 'w') as f:
     f.write(content)
 
@@ -149,18 +180,28 @@ from articles.models import Article
 articles = [
     {
         'title': 'Getting Started with Django CRUD Sundae',
-        'content': 'This is a comprehensive guide to getting started with Django CRUD Sundae. It covers all the basics you need to know.',
+        'content': 'This is a comprehensive guide to getting started with Django CRUD Sundae. It covers all the basics you need to know to build powerful CRUD interfaces quickly.',
         'status': 'published'
     },
     {
-        'title': 'Advanced Features',
-        'content': 'Explore advanced features like bulk actions, custom actions, and HTMX integration.',
+        'title': 'Advanced Features and Custom Actions',
+        'content': 'Explore advanced features like bulk actions, custom actions, HTMX integration, and permission-based access control.',
         'status': 'published'
     },
     {
-        'title': 'Draft Article',
-        'content': 'This is a draft article that has not been published yet.',
+        'title': 'Building a Blog with CRUD Sundae',
+        'content': 'Learn how to build a complete blog application using Django CRUD Sundae with minimal code.',
+        'status': 'published'
+    },
+    {
+        'title': 'Draft Article - Work in Progress',
+        'content': 'This is a draft article that demonstrates the draft status filtering feature.',
         'status': 'draft'
+    },
+    {
+        'title': 'Search and Filter Tutorial',
+        'content': 'Understanding how to implement powerful search and filtering capabilities in your CRUD views.',
+        'status': 'published'
     },
 ]
 
@@ -170,7 +211,7 @@ for article_data in articles:
         defaults=article_data
     )
 
-print(f"Created {Article.objects.count()} sample articles")
+print(f"✅ Created {Article.objects.count()} sample articles")
 EOF
 
 # Create superuser
@@ -180,19 +221,30 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 if not User.objects.filter(username='admin').exists():
     User.objects.create_superuser('admin', 'admin@example.com', 'admin')
-    print("Created superuser: admin / admin")
+    print("✅ Created superuser: admin / admin")
 EOF
 
 echo ""
 echo "✅ Demo setup complete!"
 echo ""
-echo "🎉 Next steps:"
-echo "   1. cd $DEMO_DIR"
-echo "   2. source venv/bin/activate  (or venv\\Scripts\\activate on Windows)"
-echo "   3. python manage.py runserver"
+echo "📍 Demo location: $DEMO_DIR"
 echo ""
-echo "📱 Then visit:"
-echo "   - Articles: http://localhost:8000/articles/article/"
-echo "   - Admin: http://localhost:8000/admin/ (admin/admin)"
-echo ""
-echo "🍨 Enjoy your Django CRUD Sundae!"
+
+# Start the server in background
+echo "🚀 Starting development server..."
+python manage.py runserver 8000 > /tmp/django-server.log 2>&1 &
+SERVER_PID=$!
+
+# Wait for server to start
+sleep 3
+
+# Test if server is running
+if curl -s http://localhost:8000/ > /dev/null; then
+    echo "✅ Server is running at http://localhost:8000"
+    echo ""
+    echo "Server PID: $SERVER_PID"
+    echo "Log file: /tmp/django-server.log"
+else
+    echo "❌ Server failed to start. Check /tmp/django-server.log"
+    exit 1
+fi

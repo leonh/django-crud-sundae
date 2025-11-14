@@ -588,13 +588,11 @@ Check out the `examples/` directory for more detailed usage examples.
 
 - **Python 3.8+**: Minimum Python version
 - **Django 3.2+**: Compatible with Django 3.2, 4.0, 4.1, 4.2, and 5.0+
+- **django-filter 2.0+**: Required dependency for filtering functionality
+
+All core requirements are automatically installed when you install django-crud-sundae.
 
 ### Optional Dependencies
-
-- **django-filter**: Required for filtering functionality (`filterset_fields`, `filterset_class`)
-  ```bash
-  pip install django-filter
-  ```
 
 - **HTMX**: For dynamic, AJAX-like interactions without writing JavaScript
   ```html
