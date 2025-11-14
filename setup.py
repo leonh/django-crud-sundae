@@ -28,6 +28,7 @@ setup(
     python_requires='>=3.8',
     install_requires=[
         'Django>=3.2',
+        'django-filter>=2.0',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
