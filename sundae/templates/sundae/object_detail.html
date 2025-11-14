@@ -1,0 +1,13 @@
+{% extends "broker_admin_base.html" %}
+{% load neapolitan %}
+
+{% block content %}
+
+
+<p>{{ object }}</p>
+
+
+{% object_detail object view.fields %}
+
+
+{% endblock %}
