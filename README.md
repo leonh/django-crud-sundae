@@ -2,13 +2,13 @@
 
 A useful view class for creating CRUD views in Django (With Tailwind & HTMX). Following the ice-cream metaphor established by Django Neapolitan and Django Vanilla views. This offers a few extras: a banana, squirt of cream and a drizzle of chocolate sauce!
 
-## Quick Start for Busy Developers
+## Quick Start for Busy People
 
 Want to try it out immediately? Here are the fastest ways to get started:
 
-### Option 1: Using UV (Recommended - Fast!)
+### Option 1: Using UV ()
 
-[UV](https://github.com/astral-sh/uv) is a blazing-fast Python package manager. Perfect for quick testing:
+[UV](https://github.com/astral-sh/uv) is a Python package manager. Perfect for quick testing:
 
 ```bash
 # Install UV if you don't have it
@@ -113,7 +113,7 @@ docker-compose exec web python manage.py createsuperuser
 
 ### Option 3: One-Command Demo Script
 
-Use our automated setup script that creates everything for you:
+Use a automated setup script that creates everything for you (read it before running!):
 
 ```bash
 # Download and run the demo script
@@ -135,7 +135,7 @@ The script will:
 
 Just follow the printed instructions to start the server!
 
-## Installation
+## Regular Installation (ye olde venerable pip)
 
 Install from PyPI (once published):
 
@@ -143,7 +143,7 @@ Install from PyPI (once published):
 pip install django-crud-sundae
 ```
 
-Or install from source:
+Or install from source for the heros:
 
 ```bash
 git clone https://github.com/leonh/django-crud-sundae.git
