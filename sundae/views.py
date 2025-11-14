@@ -225,7 +225,7 @@ def action(
             return HttpResponseRedirect(self.get_list_url())
 
     Args:
-        detail: If True, action operates on individual objects (includes <slug:sqid> in URL).
+        detail: If True, action operates on individual objects (includes lookup field in URL).
                 If False, action operates on list view. Default: False
         url_path: URL path segment (e.g., "approve" becomes "savedsearch/approve/").
                   If not provided, defaults to method name with underscores as hyphens.
@@ -250,7 +250,7 @@ def action(
         # Construct full path based on detail parameter
         if detail:
             # Detail action: operates on single object
-            full_path = f"{{verbose_name}}/<slug:sqid>/{func_url_path}/"
+            full_path = f"{{verbose_name}}/<slug:{{lookup_url_kwarg}}>/{func_url_path}/"
             action_type: ViewActionType = "single_item_extra"
         else:
             # List action: operates on list view
@@ -378,7 +378,7 @@ class CRUDSundaeView(View):
         path="{verbose_name}/", get=HandlerConf("show_list", "_list"), type="listing"
     )
     update_conf: ViewActionConf = ViewActionConf(
-        path="{verbose_name}/<slug:sqid>/update/",
+        path="{verbose_name}/<slug:{lookup_url_kwarg}>/update/",
         get=HandlerConf("show_update", "_form"),
         post=HandlerConf("process_update", "_form"),
         display_name="Edit",
@@ -398,13 +398,13 @@ class CRUDSundaeView(View):
         type="create",
     )
     detail_conf: ViewActionConf = ViewActionConf(
-        path="{verbose_name}/<slug:sqid>/",
+        path="{verbose_name}/<slug:{lookup_url_kwarg}>/",
         get=HandlerConf("show_detail", "_detail"),
         display_name="View",
         type="detail",
     )
     delete_conf: ViewActionConf = ViewActionConf(
-        path="{verbose_name}/<slug:sqid>/delete/",
+        path="{verbose_name}/<slug:{lookup_url_kwarg}>/delete/",
         get=HandlerConf("handle_delete", "_confirm_delete"),
         post=HandlerConf("process_delete", "_confirm_delete"),
         display_name="Delete",
@@ -654,11 +654,15 @@ class CRUDSundaeView(View):
 
         # Generate URL patterns with hyphen-separated names (model-action)
         verbose_name = cls.model._meta.model_name
+        lookup_url_kwarg = cls.lookup_url_kwarg
         urlpatterns = []
         for view_action, view_action_conf in cls.view_actions.items():
             urlpatterns.append(
                 path(
-                    view_action_conf["path"].format(verbose_name=verbose_name),
+                    view_action_conf["path"].format(
+                        verbose_name=verbose_name,
+                        lookup_url_kwarg=lookup_url_kwarg
+                    ),
                     cls.as_view(view_action, **view_action_conf),
                     name=f"{verbose_name}-{view_action}",
                 ),
