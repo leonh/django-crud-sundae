@@ -2,6 +2,139 @@
 
 A useful view class for creating CRUD views in Django (With Tailwind & HTMX). Following the ice-cream metaphor established by Django Neapolitan and Django Vanilla views. This offers a few extras: a banana, squirt of cream and a drizzle of chocolate sauce!
 
+## Quick Start for Busy Developers
+
+Want to try it out immediately? Here are the fastest ways to get started:
+
+### Option 1: Using UV (Recommended - Fast!)
+
+[UV](https://github.com/astral-sh/uv) is a blazing-fast Python package manager. Perfect for quick testing:
+
+```bash
+# Install UV if you don't have it
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Create a new Django project with django-crud-sundae
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install Django and django-crud-sundae
+uv pip install django django-crud-sundae
+
+# Create a test project
+django-admin startproject myproject .
+cd myproject
+python manage.py startapp articles
+
+# Create a simple model in articles/models.py
+cat > articles/models.py << 'EOF'
+from django.db import models
+
+class Article(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+EOF
+
+# Create a view in articles/views.py
+cat > articles/views.py << 'EOF'
+from sundae.views import CRUDSundaeView
+from .models import Article
+
+class ArticleView(CRUDSundaeView):
+    model = Article
+    lookup_field = 'pk'
+    fields = ['title', 'content']
+EOF
+
+# Update settings.py to include the apps
+# Add 'sundae' and 'articles' to INSTALLED_APPS
+
+# Create URLs
+cat > articles/urls.py << 'EOF'
+from django.urls import path, include
+from .views import ArticleView
+
+urlpatterns = [
+    path('', include(ArticleView.get_urls())),
+]
+EOF
+
+# Run migrations and start server
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+
+# Visit http://localhost:8000/article/ to see your CRUD interface!
+```
+
+### Option 2: Using Docker
+
+For a completely isolated environment with zero setup:
+
+```bash
+# Clone the repository
+git clone https://github.com/leonh/django-crud-sundae.git
+cd django-crud-sundae
+
+# Build and run with docker-compose
+docker-compose up --build
+
+# Visit http://localhost:8000 for the demo!
+```
+
+That's it! The Docker setup includes:
+- ✅ Complete Django project with sample Article model
+- ✅ Pre-configured CRUD views with search and filtering
+- ✅ Sample data to explore
+- ✅ Admin interface (login: admin/admin)
+- ✅ All dependencies installed
+
+**Useful Docker commands:**
+```bash
+# Run in background
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop the container
+docker-compose down
+
+# Access Django shell
+docker-compose exec web python manage.py shell
+
+# Create a superuser
+docker-compose exec web python manage.py createsuperuser
+```
+
+### Option 3: One-Command Demo Script
+
+Use our automated setup script that creates everything for you:
+
+```bash
+# Download and run the demo script
+curl -sSL https://raw.githubusercontent.com/leonh/django-crud-sundae/main/demo.sh | bash
+
+# Or clone and run locally
+git clone https://github.com/leonh/django-crud-sundae.git
+cd django-crud-sundae
+./demo.sh
+```
+
+The script will:
+- ✅ Create a virtual environment
+- ✅ Install all dependencies
+- ✅ Set up a complete Django project
+- ✅ Create sample models and views
+- ✅ Generate sample data
+- ✅ Create an admin user (admin/admin)
+
+Just follow the printed instructions to start the server!
+
 ## Installation
 
 Install from PyPI (once published):
