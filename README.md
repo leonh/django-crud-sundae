@@ -30,38 +30,37 @@ INSTALLED_APPS = [
 ]
 ```
 
-2. Use the Sundae views in your Django app:
+2. Use CRUDSundae in your Django app:
 
 ```python
-from sundae.views import SundaeListView, SundaeDetailView, SundaeCreateView
+from sundae.views import CRUDSundaeView
 from .models import Article
 
-class ArticleListView(SundaeListView):
+class ArticleView(CRUDSundaeView):
     model = Article
-    template_name = 'articles/article_list.html'
-
-class ArticleDetailView(SundaeDetailView):
-    model = Article
-    template_name = 'articles/article_detail.html'
-
-class ArticleCreateView(SundaeCreateView):
-    model = Article
+    lookup_field = 'pk'  # Use standard primary keys (recommended for most users)
     fields = ['title', 'content', 'author']
-    success_url = '/articles/'
 ```
 
-3. Wire up your URLs:
+**Note**: The default `lookup_field` is `'sqid'` which requires django-sqids. For a simpler setup without extra dependencies, use `lookup_field = 'pk'` as shown above.
+
+3. Wire up your URLs (automatic URL generation):
 
 ```python
-from django.urls import path
-from .views import ArticleListView, ArticleDetailView, ArticleCreateView
+from django.urls import path, include
+from .views import ArticleView
 
 urlpatterns = [
-    path('articles/', ArticleListView.as_view(), name='article-list'),
-    path('articles/<int:pk>/', ArticleDetailView.as_view(), name='article-detail'),
-    path('articles/create/', ArticleCreateView.as_view(), name='article-create'),
+    path('', include(ArticleView.get_urls())),
 ]
 ```
+
+This automatically generates all CRUD URLs:
+- `/article/` - List articles
+- `/article/create/` - Create article
+- `/article/<int:pk>/` - View article detail
+- `/article/<int:pk>/update/` - Edit article
+- `/article/<int:pk>/delete/` - Delete article
 
 ## How CRUDSundae Works
 
@@ -78,12 +77,23 @@ CRUDSundae provides a single base view class (`CRUDSundaeView`) that handles all
 
 When you call `MyView.get_urls()`, CRUDSundae automatically generates these URL patterns:
 
+**Using standard primary keys (default Django, no extra dependencies):**
+- `{model}/` - List view
+- `{model}/create/` - Create view
+- `{model}/<int:pk>/` - Detail view
+- `{model}/<int:pk>/update/` - Update view
+- `{model}/<int:pk>/delete/` - Delete view
+- `{model}/bulk-update/` - Bulk action processing
+
+**Using sqids (optional, requires django-sqids for URL-safe IDs):**
 - `{model}/` - List view
 - `{model}/create/` - Create view
 - `{model}/<slug:sqid>/` - Detail view
 - `{model}/<slug:sqid>/update/` - Update view
 - `{model}/<slug:sqid>/delete/` - Delete view
 - `{model}/bulk-update/` - Bulk action processing
+
+The lookup field is configured via the `lookup_field` attribute (default: `'sqid'`). Set to `'pk'` to use primary keys instead.
 
 ### Template Resolution
 
@@ -153,7 +163,7 @@ Add custom actions using the `@action` decorator:
 ```python
 # Detail action (operates on single object)
 @action(detail=True, url_path="approve", permission_required="myapp.approve_article")
-def approve_item(self, request, sqid):
+def approve_item(self, request, pk):  # Parameter name matches lookup_field
     obj = self.get_object()
     obj.approved = True
     obj.save()
@@ -166,6 +176,8 @@ def export_list(self, request):
     # Export logic...
     return HttpResponse(csv_data, content_type='text/csv')
 ```
+
+**Note**: The URL parameter name in your action method should match your `lookup_field` setting (e.g., `pk`, `sqid`, `slug`).
 
 ### Validation Hooks
 
@@ -279,7 +291,9 @@ class ArticleView(CRUDSundaeView):
 
 ## Complete Usage Example
 
-Here's a complete example showing how to use CRUDSundae with all major features:
+### Standard Example (Using Primary Keys)
+
+Here's a complete example using standard Django primary keys (no extra dependencies):
 
 ```python
 # models.py
@@ -311,6 +325,7 @@ from .models import Article
 
 class ArticleView(CRUDSundaeView):
     model = Article
+    lookup_field = 'pk'  # Use primary key for URLs (default is 'sqid')
 
     # Field configuration
     fields = ['title', 'content', 'category', 'status']
@@ -338,7 +353,7 @@ class ArticleView(CRUDSundaeView):
 
     # Custom action for single objects
     @action(detail=True, url_path="publish", permission_required="articles.publish_article")
-    def publish_article(self, request, sqid):
+    def publish_article(self, request, pk):
         article = self.get_object()
         article.status = 'published'
         article.save()
@@ -368,11 +383,55 @@ urlpatterns = [
 This generates the following URLs automatically:
 - `/article/` - List all articles (with search and filters)
 - `/article/create/` - Create new article
-- `/article/<sqid>/` - View article detail
-- `/article/<sqid>/update/` - Edit article
-- `/article/<sqid>/delete/` - Delete article (with confirmation)
-- `/article/<sqid>/publish/` - Custom publish action
+- `/article/<int:pk>/` - View article detail
+- `/article/<int:pk>/update/` - Edit article
+- `/article/<int:pk>/delete/` - Delete article (with confirmation)
+- `/article/<int:pk>/publish/` - Custom publish action
 - `/article/bulk-update/` - Process bulk actions
+
+### Alternative Example (Using Sqids)
+
+If you want obfuscated, URL-safe IDs instead of sequential integers:
+
+```bash
+pip install django-sqids
+```
+
+```python
+# models.py
+from django.db import models
+from django_sqids import SqidsField
+
+class Article(models.Model):
+    sqid = SqidsField(real_field_name='id')  # Add sqid field
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    # ... other fields ...
+```
+
+```python
+# views.py
+class ArticleView(CRUDSundaeView):
+    model = Article
+    lookup_field = 'sqid'  # Use sqid for URLs (this is the default)
+
+    # ... rest of configuration ...
+
+    @action(detail=True, url_path="publish")
+    def publish_article(self, request, sqid):  # Parameter matches lookup_field
+        article = self.get_object()
+        # ... action logic ...
+```
+
+This generates URLs with sqids:
+- `/article/` - List all articles
+- `/article/create/` - Create new article
+- `/article/<slug:sqid>/` - View article detail (e.g., `/article/abc123/`)
+- `/article/<slug:sqid>/update/` - Edit article
+- `/article/<slug:sqid>/delete/` - Delete article
+- `/article/<slug:sqid>/publish/` - Custom publish action
+
+**Benefits of sqids**: Non-sequential IDs, URL-safe, obfuscated from users, prevents enumeration attacks.
 
 ## Available Views
 
@@ -414,10 +473,11 @@ Check out the `examples/` directory for more detailed usage examples.
   <script src="https://cdn.tailwindcss.com"></script>
   ```
 
-- **django-sqids** (or similar): If using `sqid` for URL-safe IDs instead of numeric PKs
+- **django-sqids**: Only required if you set `lookup_field = 'sqid'` for obfuscated, URL-safe IDs
   ```bash
   pip install django-sqids
   ```
+  **Note**: Most users can skip this and use `lookup_field = 'pk'` instead (standard Django primary keys)
 
 ### Configuration Requirements
 
@@ -436,10 +496,28 @@ INSTALLED_APPS = [
 
 CRUDSundae works with any Django model, but certain features have specific requirements:
 
-1. **Lookup Field**: By default uses `sqid` for object lookups. You can:
-   - Use `sqid` (recommended for security/obfuscation)
-   - Change to `pk` by setting `lookup_field = 'pk'`
-   - Use any unique field (slug, uuid, etc.)
+1. **Lookup Field**: Configure which field to use for URL object lookups via `lookup_field`:
+   - **`'pk'`** (recommended for most users): Uses Django's standard primary key - no extra setup required
+   - **`'sqid'`** (default in CRUDSundaeView): Requires adding `django-sqids` and a `sqid` field to your model - provides URL-safe, obfuscated IDs
+   - **`'slug'`**, **`'uuid'`**, or any unique field: Use any unique model field for URLs
+
+   **Example configurations:**
+   ```python
+   # Using primary key (most common, no dependencies)
+   class ArticleView(CRUDSundaeView):
+       model = Article
+       lookup_field = 'pk'
+
+   # Using slug
+   class ArticleView(CRUDSundaeView):
+       model = Article
+       lookup_field = 'slug'
+
+   # Using sqid (requires django-sqids)
+   class ArticleView(CRUDSundaeView):
+       model = Article
+       lookup_field = 'sqid'  # This is the default
+   ```
 
 2. **String Representation**: Define `__str__()` method for readable object names in messages and lists
 
@@ -487,8 +565,10 @@ class MyView(CRUDSundaeView):
     allow_empty = True                 # Allow empty list views
 
     # Object lookup
-    lookup_field = 'sqid'              # Field to use for URL lookups (default: 'sqid')
-    lookup_url_kwarg = 'sqid'          # URL parameter name
+    lookup_field = 'pk'                # Field to use for URL lookups
+                                       # Common values: 'pk', 'slug', 'uuid', 'sqid'
+                                       # Default: 'sqid' (requires django-sqids)
+    lookup_url_kwarg = 'pk'            # URL parameter name (usually matches lookup_field)
 
     # Templates
     template_name = 'my_template.html' # Override template
