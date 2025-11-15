@@ -20,7 +20,7 @@ source venv/bin/activate
 # Install Django and local django-crud-sundae
 echo "📦 Installing Django and django-crud-sundae from source..."
 pip install --quiet --upgrade pip
-pip install --quiet django django-filter
+pip install --quiet django django-filter django-widget-tweaks
 pip install --quiet -e /home/user/django-crud-sundae
 
 # Create Django project

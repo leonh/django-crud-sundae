@@ -1,39 +1,9 @@
-{% extends "broker_admin_base.html" %}
-{% load navigation_tags core_tags %}
+{% extends "sundae/base.html" %}
+
 
 {% block title %}Delete {{ object_verbose_name|capfirst }}{% endblock %}
 
 {% block topnav %}
-<!-- Context-Aware Top Navigation -->
-<div x-data="{}" class="topnav-admin">
-    <div class="topnav-inner py-2">
-        <!-- Left section: Hamburger + Page Title -->
-        <div class="flex items-center gap-3 min-w-0 flex-1 md:flex-initial">
-            <!-- Hamburger Menu Toggle -->
-            <button
-                @click="$store.brokerNav.sideMenuOpen = !$store.brokerNav.sideMenuOpen"
-                class="text-gray-600 hover:text-gray-900 transition-colors flex-shrink-0"
-                aria-label="Toggle navigation menu"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                    {{ heroicons|get_item:"bars-3"|safe }}
-                </svg>
-            </button>
-
-            <!-- Page Title -->
-            <h1 class="font-semibold text-base text-gray-900 truncate">
-                Delete {{ object_verbose_name|capfirst }}
-            </h1>
-        </div>
-
-        <!-- Right section: Cancel Button -->
-        <div class="flex flex-wrap gap-2 items-center ml-auto">
-            <a href="{{ list_view_url }}" class="whitespace-nowrap btn-secondary-admin">
-                Cancel
-            </a>
-        </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block content %}

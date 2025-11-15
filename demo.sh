@@ -31,7 +31,7 @@ fi
 # Install packages
 echo "📦 Installing Django and dependencies..."
 pip install --quiet --upgrade pip
-pip install --quiet django django-filter
+pip install --quiet django django-filter django-widget-tweaks
 
 # Note: When django-crud-sundae is published to PyPI, use:
 # pip install --quiet django-crud-sundae

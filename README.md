@@ -589,7 +589,7 @@ Check out the `examples/` directory for more detailed usage examples.
 - **Python 3.8+**: Minimum Python version
 - **Django 3.2+**: Compatible with Django 3.2, 4.0, 4.1, 4.2, and 5.0+
 - **django-filter 2.0+**: Required dependency for filtering functionality
-
+- **django-widget-tweaks**: optional used in the example demo
 All core requirements are automatically installed when you install django-crud-sundae.
 
 ### Optional Dependencies

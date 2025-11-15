@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir django
+    pip install --no-cache-dir django django-filter django-widget-tweaks
 
 # Copy the package
 COPY . /app/

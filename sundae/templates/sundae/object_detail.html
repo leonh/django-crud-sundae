@@ -1,13 +1,9 @@
-{% extends "broker_admin_base.html" %}
-{% load neapolitan %}
-
+{% extends "sundae/base.html" %}
+{% load sundae_tags %}
 {% block content %}
 
 
 <p>{{ object }}</p>
-
-
-{% object_detail object view.fields %}
 
 
 {% endblock %}
