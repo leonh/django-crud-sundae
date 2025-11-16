@@ -6,7 +6,7 @@ A useful view class for creating CRUD views in Django (With Tailwind & HTMX). Fo
 
 Want to try it out immediately? Here are the fastest ways to get started:
 
-### Option 1: Using UV ()
+### Option 1: Using UV
 
 [UV](https://github.com/astral-sh/uv) is a Python package manager. Perfect for quick testing:
 
@@ -19,7 +19,7 @@ uv venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Install Django and django-crud-sundae
-uv pip install django django-crud-sundae
+uv pip install django django-crud-sundae django-filter
 
 # Create a test project
 django-admin startproject myproject .
@@ -135,7 +135,7 @@ The script will:
 
 Just follow the printed instructions to start the server!
 
-## Regular Installation (ye olde venerable pip)
+## Regular Installation (pip)
 
 Install from PyPI (once published):
 
