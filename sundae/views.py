@@ -1881,7 +1881,32 @@ class CRUDSundaeView(View):
     ) -> TemplateResponse:
         """Display a single object detail view."""
         self.object = self.get_object()
+
+        # Transform object into iterable of (field_name, field_value) tuples for template
+        fields_to_display = (
+            self.detail_fields or
+            self.fields or
+            [f.name for f in self.model._meta.fields if f.editable]
+        )
+
+        object_fields = []
+        for field_name in fields_to_display:
+            try:
+                field = self.model._meta.get_field(field_name)
+                value = getattr(self.object, field_name)
+                # Get display value for choice fields
+                if hasattr(field, 'choices') and field.choices:
+                    display_method = f'get_{field_name}_display'
+                    if hasattr(self.object, display_method):
+                        value = getattr(self.object, display_method)()
+                object_fields.append((field.verbose_name or field_name, value))
+            except Exception:
+                # Skip fields that don't exist or can't be accessed
+                continue
+
         context = self.get_context_data()
+        # Store field tuples in context for the template to iterate over
+        context['object_fields'] = object_fields
         return self.render_to_response(context)
 
     def show_create(
