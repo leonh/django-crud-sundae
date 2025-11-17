@@ -1,8 +1,9 @@
-from collections import defaultdict
-
-# sundae/plugins/base.py
+"""
+Base plugin class for Django CRUD Sundae plugins.
+"""
 from typing import Optional
 from abc import ABC
+
 
 class BasePlugin(ABC):
     """Base class for all Sundae plugins"""
@@ -29,41 +30,20 @@ class BasePlugin(ABC):
         """
         pass
 
+    def is_enabled(self):
+        """
+        Check if this plugin is enabled.
+
+        Returns:
+            bool: True if plugin is enabled, False otherwise
+        """
+        from django.conf import settings
+        plugin_config = getattr(settings, 'SUNDAE_PLUGINS', {})
+        disabled = plugin_config.get('disabled', [])
+        return self.name not in disabled
+
     def get_config(self):
         """Get plugin configuration from settings"""
         from django.conf import settings
         plugin_config = getattr(settings, 'SUNDAE_PLUGINS', {})
         return plugin_config.get('config', {}).get(self.name, {})
-
-
-class PluginRegistry:
-    """Central registry for all plugins"""
-    _hooks = defaultdict(list)
-    _plugins = {}
-    _widget_mappings = {}
-    _view_mixins = []
-
-    @classmethod
-    def register_hook(cls, hook_name, callback, priority=50):
-        """Register a callback for a specific hook"""
-        cls._hooks[hook_name].append((priority, callback))
-        cls._hooks[hook_name].sort(key=lambda x: x[0])
-
-    @classmethod
-    def register_widget(cls, field_type, widget_class):
-        """Register custom widget for field type"""
-        cls._widget_mappings[field_type] = widget_class
-
-    @classmethod
-    def register_view_mixin(cls, mixin_class):
-        """Register a mixin to be added to CRUDSundaeView"""
-        cls._view_mixins.append(mixin_class)
-
-class SundaePlugin:
-    """Base class for all plugins"""
-    name = None
-    version = None
-
-    def ready(self):
-        """Called when plugin is loaded"""
-        pass

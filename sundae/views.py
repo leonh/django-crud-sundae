@@ -39,6 +39,9 @@ from django.utils.translation import gettext as _
 from django.views.generic import View
 from django_filters.filterset import filterset_factory, FilterSet
 
+# Plugin system imports
+from sundae.plugins.mixins import PluginMixin
+
 
 class MultipleIntegersField(forms.TypedMultipleChoiceField):
     """
@@ -338,7 +341,7 @@ def bulk_action(
     return decorator
 
 
-class CRUDSundaeView(View):
+class CRUDSundaeView(PluginMixin, View):
     """
     A base view class for creating CRUD interfaces with minimal configuration.
 
@@ -350,6 +353,7 @@ class CRUDSundaeView(View):
     - Bulk action support with @bulk_action decorator
     - Pagination and filtering
     - Comprehensive validation hooks and error handling
+    - Plugin system for extending functionality
 
     Custom Actions:
         Use the @action decorator to register custom actions:
@@ -372,6 +376,10 @@ class CRUDSundaeView(View):
 
     # Model configuration
     model: Optional[Type[Model]] = None
+
+    # Plugin configuration
+    enable_plugins: bool = True
+    skip_hooks: List[str] = []
 
     # Default view action configurations
     list_conf: ViewActionConf = ViewActionConf(
