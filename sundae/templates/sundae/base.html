@@ -1,3 +1,4 @@
+{% load sundae_plugin_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,6 +14,12 @@
 
     <!-- Alpine.js for interactive components -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Plugin CSS -->
+    {% plugin_static_css %}
+
+    <!-- Plugin hook for additional head content -->
+    {% plugin_hook "extra_head" %}
 
     <!-- Custom CSS Components -->
     <style>
@@ -243,8 +250,14 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-gray-50 min-h-screen">
+    <!-- Plugin hook for body start -->
+    {% plugin_hook "body_start" %}
+
     <!-- Header Navigation -->
     <header class="bg-white border-b border-gray-200 shadow-sm">
+        <!-- Plugin hook for before header -->
+        {% plugin_hook "before_header" %}
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
@@ -254,26 +267,49 @@
                 </div>
                 <nav class="flex space-x-4">
                     {% block navigation %}{% endblock %}
+                    <!-- Plugin hook for extra navigation -->
+                    {% plugin_hook "nav_items" %}
                 </nav>
             </div>
         </div>
+
+        <!-- Plugin hook for after header -->
+        {% plugin_hook "after_header" %}
     </header>
 
     <!-- Main Content -->
     <main>
+        <!-- Plugin hook for before content -->
+        {% plugin_hook "before_content" %}
+
         <div class="container mx-auto px-4 py-8">
             {% block content %}{% endblock %}
         </div>
+
+        <!-- Plugin hook for after content -->
+        {% plugin_hook "after_content" %}
     </main>
 
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 mt-auto">
+        <!-- Plugin hook for before footer -->
+        {% plugin_hook "before_footer" %}
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <p class="text-center text-sm text-gray-500">
                 {% block footer %}Powered by Django CRUD Sundae{% endblock %}
             </p>
         </div>
+
+        <!-- Plugin hook for after footer -->
+        {% plugin_hook "after_footer" %}
     </footer>
+
+    <!-- Plugin JavaScript -->
+    {% plugin_static_js %}
+
+    <!-- Plugin hook for end of body -->
+    {% plugin_hook "body_end" %}
 
     {% block extra_body %}{% endblock %}
 </body>
