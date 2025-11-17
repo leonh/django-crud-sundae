@@ -74,7 +74,7 @@
                                 <span class="text-red-500">*</span>
                                 {% endif %}
                             </label>
-                            {% render_field field class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" %}
+                            {{ field|add_class:"block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" }}
                             {% if field.help_text %}
                             <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
                             {% endif %}
