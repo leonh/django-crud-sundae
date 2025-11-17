@@ -1255,11 +1255,18 @@ class CRUDSundaeView(PluginMixin, View):
             ImproperlyConfigured: If form_class, model, and fields are not properly configured
         """
         if self.form_class is not None:
-            return self.form_class
+            # Allow plugins to filter the form class
+            return self.filter_hook('filter_form_class', self.form_class)
 
         if self.model is not None and self.fields is not None:
+            # Get initial widgets (either from view attribute or empty dict)
+            widgets = self.widgets.copy() if self.widgets else {}
+
+            # Allow plugins to customize widgets
+            widgets = self.filter_hook('filter_form_widgets', widgets)
+
             return model_forms.modelform_factory(
-                self.model, fields=self.fields, widgets=self.widgets
+                self.model, fields=self.fields, widgets=widgets
             )
 
         msg = (
@@ -1435,6 +1442,13 @@ class CRUDSundaeView(PluginMixin, View):
             context_object_name = self.get_context_object_name(is_list=True)
             if context_object_name:
                 kwargs[context_object_name] = self.object_list
+
+        # Allow plugins to filter context (especially for list views)
+        kwargs = self.filter_hook('filter_context', kwargs)
+
+        # Allow plugins to filter list context specifically
+        if getattr(self, "object_list", None) is not None:
+            kwargs = self.filter_hook('filter_list_context', kwargs)
 
         return kwargs
 
