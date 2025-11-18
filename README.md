@@ -2,6 +2,25 @@
 
 A useful view class for creating CRUD views in Django (With Tailwind & HTMX). Following the ice-cream metaphor established by Django Neapolitan and Django Vanilla views. This offers a few extras: a banana, squirt of cream and a drizzle of chocolate sauce!
 
+## Features
+
+Love Django's built-in Admin but wish it was easier to customize for your specific application? Try a spoonfull of Sundae.
+
+- Customisable CRUD views
+- Plugin Sysytem
+- Validation Hooks
+- Permissions
+- Django-filter on list views
+- Bulk actions on list views
+- [Plugin support](https://github.com/leonh/django-crud-sundae/blob/main/PLUGIN_SYSTEM.md), you can extend sundae view however you want 
+
+
+Via Plugins
+ - DataTables.js
+ - Quill.js
+ - flatpickr.js 
+ - Select2
+
 ## Quick Start for Busy People
 
 Want to try it out immediately? Here are the fastest ways to get started:
