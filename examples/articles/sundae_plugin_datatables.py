@@ -38,9 +38,9 @@ class DataTablesPlugin(BasePlugin):
     def get_css_files(self, **kwargs):
         """Return DataTables CSS files."""
         return [
-            'https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css',
-            'https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css',
-            'https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css',
+            'https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css',
+            'https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css',
+            'https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css',
         ]
 
     def get_js_files(self, **kwargs):
@@ -48,7 +48,6 @@ class DataTablesPlugin(BasePlugin):
         return [
             'https://code.jquery.com/jquery-3.7.0.min.js',
             'https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js',
-            'https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js',
             'https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js',
             'https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js',
             'https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js',
@@ -106,12 +105,21 @@ class DataTablesPlugin(BasePlugin):
             <script>
             $(document).ready(function() {{
                 // Initialize DataTables on admin tables
-                $('.table-admin').DataTable({config_json});
+                var table = $('.table-admin').DataTable({config_json});
 
-                // Custom styling for Tailwind CSS
-                $('.dataTables_wrapper').addClass('p-4');
-                $('.dataTables_filter input').addClass('form-select ml-2');
-                $('.dataTables_length select').addClass('form-select ml-2 mr-2');
+                // Custom styling for Tailwind CSS compatibility
+                $('.dataTables_wrapper').addClass('bg-white rounded-lg shadow-sm border border-gray-200');
+                $('.dataTables_filter input').addClass('rounded border-gray-300 px-3 py-1.5 text-sm');
+                $('.dataTables_length select').addClass('rounded border-gray-300 px-3 py-1.5 text-sm');
+                $('.dataTables_filter label').addClass('text-sm text-gray-700');
+                $('.dataTables_length label').addClass('text-sm text-gray-700');
+
+                // Style pagination
+                $('.dataTables_paginate .paginate_button').addClass('px-3 py-1 mx-0.5 text-sm rounded border border-gray-300 hover:bg-gray-50');
+                $('.dataTables_paginate .paginate_button.current').addClass('bg-blue-600 text-white border-blue-600');
+
+                // Style buttons
+                $('.dt-buttons .dt-button').addClass('btn-secondary-admin mr-2');
             }});
             </script>
             """
