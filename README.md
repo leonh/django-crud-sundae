@@ -4,7 +4,7 @@ A useful view class for creating CRUD views in Django (With Tailwind & HTMX). Fo
 
 ## Features
 
-Love Django's built-in Admin but wish it was easier to customize for your specific application? Try a spoonfull of Sundae.
+If you appreciate Django's built-in Admin for its CRUD views but need more flexibility to shape it into your application, Sundae might be just what you're looking for..
 
 - Customisable CRUD views
 - Plugin Sysytem
