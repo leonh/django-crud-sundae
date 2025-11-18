@@ -112,9 +112,9 @@
 
     </div>
 </div>
+{% endblock %}
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-        crossorigin="anonymous"></script>
+{% block extra_body %}
+<!-- Form media JS (jQuery loaded globally in base template) -->
 {{ form.media.js }}
 {% endblock %}

@@ -44,9 +44,8 @@ class DataTablesPlugin(BasePlugin):
         ]
 
     def get_js_files(self, **kwargs):
-        """Return DataTables JavaScript files."""
+        """Return DataTables JavaScript files (jQuery loaded globally in base template)."""
         return [
-            'https://code.jquery.com/jquery-3.7.0.min.js',
             'https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js',
             'https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js',
             'https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js',
