@@ -52,7 +52,7 @@ class AdvancedWidgetsPlugin(BasePlugin):
         return css_files
 
     def get_js_files(self, **kwargs):
-        """Return JavaScript files for widgets."""
+        """Return JavaScript files for widgets (jQuery loaded globally in base template)."""
         config = self.get_config()
         js_files = []
 
@@ -60,10 +60,8 @@ class AdvancedWidgetsPlugin(BasePlugin):
             js_files.append('https://cdn.jsdelivr.net/npm/flatpickr')
 
         if config.get('use_select2', True):
-            js_files.extend([
-                'https://code.jquery.com/jquery-3.7.0.min.js',
-                'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js',
-            ])
+            # jQuery is loaded globally in base template
+            js_files.append('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js')
 
         if config.get('use_quill', True):
             js_files.append('https://cdn.quilljs.com/1.3.6/quill.js')

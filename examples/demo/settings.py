@@ -123,3 +123,30 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Django CRUD Sundae Plugin Configuration
+SUNDAE_PLUGINS = {
+    'enabled': [
+        # Plugins will be auto-discovered from installed apps
+    ],
+    'disabled': [
+        # Add plugin names here to disable them
+    ],
+    'config': {
+        # Plugin-specific configuration
+        'sundae_advanced_widgets': {
+            'use_flatpickr': True,  # Enable Flatpickr date pickers
+            'use_select2': True,     # Enable Select2 dropdowns
+            'use_quill': True,       # Enable Quill rich text editor
+            'rich_text_fields': ['content', 'body', 'description', 'text', 'html', 'bio'],
+        },
+        'sundae_datatables': {
+            'page_length': 25,       # Items per page
+            'responsive': True,      # Enable responsive mode
+            'dom': 'Bfrtip',        # DataTables DOM layout
+            'buttons': ['copy', 'csv', 'excel', 'pdf', 'print'],
+            'order': [[0, 'asc']],  # Default sort order
+            'override_template': False,  # Use default templates
+        },
+    }
+}

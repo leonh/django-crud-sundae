@@ -1,6 +1,6 @@
 # sundae/plugins/registry.py
 from collections import defaultdict, OrderedDict
-from typing import Dict, List, Any, Type
+from typing import Dict, List, Any, Type, Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -97,3 +97,38 @@ class PluginRegistry:
             except Exception as e:
                 logger.error(f"Error executing hook {hook_name}: {e}")
         return results
+
+    @classmethod
+    def get_plugin(cls, plugin_name: str) -> Optional['BasePlugin']:
+        """Get a specific plugin by name"""
+        return cls._plugins.get(plugin_name)
+
+    @classmethod
+    def get_all_plugins(cls) -> Dict[str, 'BasePlugin']:
+        """Get all registered plugins"""
+        return cls._plugins.copy()
+
+    @classmethod
+    def get_field_renderer(cls, field_name: str) -> Optional[callable]:
+        """Get a custom field renderer for a specific field"""
+        return cls._field_renderers.get(field_name)
+
+    @classmethod
+    def register_field_renderer(cls, field_name: str, renderer: callable):
+        """Register a custom field renderer"""
+        cls._field_renderers[field_name] = renderer
+
+    @classmethod
+    def get_view_mixins(cls) -> List[Type]:
+        """Get all registered view mixins"""
+        return cls._view_mixins.copy()
+
+    @classmethod
+    def get_widget_for_field(cls, field_type: str) -> Optional[Type]:
+        """Get a custom widget for a field type"""
+        return cls._widget_mappings.get(field_type)
+
+    @classmethod
+    def get_template_overrides(cls, template_pattern: str) -> List[str]:
+        """Get template overrides for a specific pattern"""
+        return cls._template_overrides.get(template_pattern, [])

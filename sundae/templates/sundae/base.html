@@ -305,6 +305,11 @@
         {% plugin_hook "after_footer" %}
     </footer>
 
+    <!-- jQuery (required by plugins) - load once before plugin scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+
     <!-- Plugin JavaScript -->
     {% plugin_static_js %}
 
