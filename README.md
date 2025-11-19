@@ -162,7 +162,7 @@ Install from PyPI (once published):
 pip install django-crud-sundae
 ```
 
-Or install from source for the heros:
+Or install from source:
 
 ```bash
 git clone https://github.com/leonh/django-crud-sundae.git
