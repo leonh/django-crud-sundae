@@ -90,7 +90,7 @@ wheels = [
 
 [[package]]
 name = "django-crud-sundae"
-version = "0.0.3"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "django", version = "4.2.26", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
