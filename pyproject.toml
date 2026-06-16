@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "django-crud-sundae"
-version = "0.0.3"
+version = "0.2.0"
 description = "A useful view class for creating CRUD views in Django (With Tailwind & HTMX & extensible plugin system)"
 readme = "README.md"
 requires-python = ">=3.8"

@@ -5,6 +5,6 @@ Following the ice-cream metaphor established by Django Neapolitan and Django Van
 This offers a few extras: a banana, squirt of cream and a drizzle of chocolate sauce!
 """
 
-__version__ = "0.0.3"
+__version__ = "0.2.0"
 
 default_app_config = "sundae.apps.SundaeConfig"
