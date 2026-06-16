@@ -2,6 +2,10 @@
 
 A useful view class for creating CRUD views in Django (With Tailwind & HTMX). Following the ice-cream metaphor established by Django Neapolitan and Django Vanilla views. This offers a few extras: a banana, squirt of cream and a drizzle of chocolate sauce!
 
+
+<img width="200" height="200" alt="crud_sundae_200" src="https://github.com/user-attachments/assets/0e0112bc-6889-4693-81b2-3a7c39295b07" />
+
+
 ## Features
 
 If you appreciate Django's built-in Admin for its CRUD views but need more flexibility to shape it into your application, Sundae might be just what you're looking for..
