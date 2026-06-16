@@ -15,7 +15,7 @@ def read_file(filename):
 
 setup(
     name='django-crud-sundae',
-    version='0.1.0',
+    version='0.0.3',
     description='A useful view class for creating CRUD views in Django (With Tailwind & HTMX)',
     long_description=read_file('README.md'),
     long_description_content_type='text/markdown',

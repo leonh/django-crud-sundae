@@ -1,7 +1,19 @@
 from django import template
-from django.urls import reverse
+from django.urls import NoReverseMatch, reverse
 
 register = template.Library()
+
+
+def _safe_reverse(viewname):
+    """Reverse ``viewname``, returning None if no such URL pattern exists.
+
+    Lets list rendering survive when CRUD actions (e.g. ``bulk_update``) are
+    removed via ``excluded_actions``.
+    """
+    try:
+        return reverse(viewname)
+    except NoReverseMatch:
+        return None
 
 
 @register.inclusion_tag("sundae/partial/list_field.html")
@@ -50,7 +62,7 @@ def object_list(context):
         "bulk_actions": context["view"].get_bulk_actions(),
         "headers": headers,
         "object_list": object_list,
-        "bulk_update_proxy_url": reverse(
+        "bulk_update_proxy_url": _safe_reverse(
             f"{context['view'].model._meta.model_name}-bulk_update"
         ),
         "view": context["view"],

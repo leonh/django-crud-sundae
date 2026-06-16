@@ -33,7 +33,7 @@ from django.http import (
 )
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
-from django.urls import URLPattern, path, reverse
+from django.urls import URLPattern, NoReverseMatch, path, reverse
 from django.utils.decorators import classonlymethod
 from django.utils.translation import gettext as _
 from django.views.generic import View
@@ -1403,6 +1403,26 @@ class CRUDSundaeView(PluginMixin, View):
 
         return None
 
+    def _safe_reverse(self, viewname: str) -> Optional[str]:
+        """Reverse a CRUD action URL, returning None when that action is absent.
+
+        Actions can be removed via ``excluded_actions`` (e.g. a list-only view
+        with no create page), in which case the URL pattern doesn't exist and
+        ``reverse()`` raises ``NoReverseMatch``. Built-in templates already
+        guard on URLs like ``create_view_url`` being falsy, so returning None
+        lets such views render instead of crashing.
+
+        Args:
+            viewname: The URL pattern name to reverse (e.g. ``"article-create"``)
+
+        Returns:
+            The reversed URL, or None if no matching pattern is registered.
+        """
+        try:
+            return reverse(viewname)
+        except NoReverseMatch:
+            return None
+
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         """
         Returns a dictionary to use as the context of the response.
@@ -1428,8 +1448,9 @@ class CRUDSundaeView(PluginMixin, View):
         kwargs["view"] = self
         kwargs["object_verbose_name"] = self.model._meta.verbose_name
         kwargs["object_verbose_name_plural"] = self.model._meta.verbose_name_plural
-        kwargs["create_view_url"] = reverse(f"{self.model._meta.model_name}-create")
-        kwargs["list_view_url"] = reverse(f"{self.model._meta.model_name}-list")
+        model_name = self.model._meta.model_name
+        kwargs["create_view_url"] = self._safe_reverse(f"{model_name}-create")
+        kwargs["list_view_url"] = self._safe_reverse(f"{model_name}-list")
 
         if getattr(self, "object", None) is not None:
             kwargs["object"] = self.object
